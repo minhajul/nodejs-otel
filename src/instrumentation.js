@@ -23,19 +23,6 @@ const sdk = new NodeSDK({
     instrumentations: [getNodeAutoInstrumentations()]
 });
 
-// Initialize SDK
-// sdk.start()
-//     .then(() => {
-//         console.log("Tracing and metrics initialized");
-//
-//         // Verify meter provider is set
-//         if (!metrics.getMeterProvider()) {
-//             console.warn("Meter provider not set! Forcing global meter provider");
-//             metrics.setGlobalMeterProvider(sdk.meterProvider);
-//         }
-//     })
-//     .catch(error => console.error("Error initializing SDK", error));
-
 (async () => {
     try {
         await sdk.start();
