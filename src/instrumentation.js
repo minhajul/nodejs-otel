@@ -1,33 +1,63 @@
 const { NodeSDK } = require("@opentelemetry/sdk-node");
 const { ConsoleSpanExporter } = require("@opentelemetry/sdk-trace-node");
 const { getNodeAutoInstrumentations } = require("@opentelemetry/auto-instrumentations-node");
-const { PeriodicExportingMetricReader, MeterProvider } = require("@opentelemetry/sdk-metrics");
 const { PrometheusExporter } = require("@opentelemetry/exporter-prometheus");
-const { metrics } = require("@opentelemetry/api"); // Import metrics from API
+const { Resource } = require("@opentelemetry/resources");
+const { SemanticResourceAttributes } = require("@opentelemetry/semantic-conventions");
+const { metrics } = require("@opentelemetry/api");
 
-// Create a Prometheus Exporter
+// Create Prometheus Exporter
 const prometheusExporter = new PrometheusExporter({
-    port: 9464, // Default Prometheus scrape port
+    port: 9464
 });
 
-// Create a PeriodicExportingMetricReader
-const metricReader = new PeriodicExportingMetricReader({
-    exporter: prometheusExporter,
+// Create resource with service name
+const resource = new Resource({
+    [SemanticResourceAttributes.SERVICE_NAME]: "dice-service"
 });
-
-// Create a MeterProvider and pass the metricReader to its constructor
-// This is the most likely correct way for sdk-metrics@2.0.1 if addMetricReader is not available.
-const meterProvider = new MeterProvider({
-    readers: [metricReader], // Assuming 'readers' is the correct property name for passing metric readers
-});
-
-// Set the MeterProvider globally
-metrics.setGlobalMeterProvider(meterProvider);
 
 const sdk = new NodeSDK({
+    resource: resource,
     traceExporter: new ConsoleSpanExporter(),
-    // Do not pass metricReader here, as it's handled by the global MeterProvider
-    instrumentations: [getNodeAutoInstrumentations()],
+    metricReader: prometheusExporter,  // Use as metricReader
+    instrumentations: [getNodeAutoInstrumentations()]
 });
 
-sdk.start();
+// Initialize SDK
+// sdk.start()
+//     .then(() => {
+//         console.log("Tracing and metrics initialized");
+//
+//         // Verify meter provider is set
+//         if (!metrics.getMeterProvider()) {
+//             console.warn("Meter provider not set! Forcing global meter provider");
+//             metrics.setGlobalMeterProvider(sdk.meterProvider);
+//         }
+//     })
+//     .catch(error => console.error("Error initializing SDK", error));
+
+(async () => {
+    try {
+        await sdk.start();
+        console.log("Tracing and metrics initialized");
+        if (!metrics.getMeterProvider()) {
+            console.warn("Meter provider not set! Forcing global meter provider");
+            metrics.setGlobalMeterProvider(sdk.meterProvider);
+        }
+    } catch (error) {
+        console.error("Error initializing SDK", error);
+    }
+})();
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+    sdk.shutdown()
+        .then(() => console.log("SDK shut down successfully"))
+        .catch(err => console.error("Error shutting down SDK", err))
+        .finally(() => process.exit(0));
+});
+
+// Debug: Check every 5 seconds if meter provider is set
+setInterval(() => {
+    console.log(`Meter provider set: ${!!metrics.getMeterProvider()}`);
+}, 5000);
