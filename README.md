@@ -41,10 +41,9 @@ This project demonstrates how to instrument a Node.js Express application with O
    Access raw metrics:
    ```curl http://localhost:9464/metrics```
 
-5. Start Prometheus (Docker)
+5. Start Prometheus using Docker
    ```docker-compose up -d```
    Access Prometheus UI at: http://localhost:9090
-
 
 ### Key Metrics
 `http_requests_total`: Total HTTP requests by route
@@ -53,7 +52,7 @@ This project demonstrates how to instrument a Node.js Express application with O
 `nodejs_heap_space_size`: Heap memory usage (auto-instr)
 
 ### Prometheus Queries
-1. Total requests to `/rolldice` or `/slow-operation`:
+1. Total requests for `/rolldice` or `/slow-operation`:
     ```http_requests_total{route="/rolldice"}```
 
 2. Request rate per second:
