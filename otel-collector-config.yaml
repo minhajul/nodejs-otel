@@ -5,7 +5,7 @@ receivers:
         - job_name: 'otel-collector'
           scrape_interval: 10s
           static_configs:
-            - targets: ['localhost:9464']
+            - targets: [ 'localhost:9464' ]
 
 exporters:
   prometheus:
@@ -14,5 +14,5 @@ exporters:
 service:
   pipelines:
     metrics:
-      receivers: [prometheus]
-      exporters: [prometheus]
+      receivers: [ prometheus ]
+      exporters: [ prometheus ]

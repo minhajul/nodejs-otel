@@ -3,7 +3,6 @@
 This project demonstrates how to instrument a Node.js Express application with OpenTelemetry and export metrics to Prometheus for monitoring.
 
 ## Features
-
 - 📊 Automatic instrumentation of Express.js
 - 📈 Custom metrics collection (`http_requests_total`)
 - 🔭 Distributed tracing with parent/child spans

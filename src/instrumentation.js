@@ -1,10 +1,10 @@
-const { NodeSDK } = require("@opentelemetry/sdk-node");
-const { ConsoleSpanExporter } = require("@opentelemetry/sdk-trace-node");
-const { getNodeAutoInstrumentations } = require("@opentelemetry/auto-instrumentations-node");
-const { PrometheusExporter } = require("@opentelemetry/exporter-prometheus");
-const { Resource } = require("@opentelemetry/resources");
-const { SemanticResourceAttributes } = require("@opentelemetry/semantic-conventions");
-const { metrics } = require("@opentelemetry/api");
+const {NodeSDK} = require("@opentelemetry/sdk-node");
+const {ConsoleSpanExporter} = require("@opentelemetry/sdk-trace-node");
+const {getNodeAutoInstrumentations} = require("@opentelemetry/auto-instrumentations-node");
+const {PrometheusExporter} = require("@opentelemetry/exporter-prometheus");
+const {Resource} = require("@opentelemetry/resources");
+const {SemanticResourceAttributes} = require("@opentelemetry/semantic-conventions");
+const {metrics} = require("@opentelemetry/api");
 
 // Create Prometheus Exporter
 const prometheusExporter = new PrometheusExporter({

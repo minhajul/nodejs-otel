@@ -1,5 +1,5 @@
 const express = require("express");
-const { trace, metrics } = require("@opentelemetry/api");
+const {trace, metrics} = require("@opentelemetry/api");
 
 const PORT = parseInt(process.env.PORT || "8080");
 const app = express();
@@ -11,13 +11,18 @@ function getMeter() {
     } catch (error) {
         console.error("Failed to get meter:", error);
         return {
-            createCounter: () => ({ add: () => {} }),
-            createHistogram: () => ({ record: () => {} })
+            createCounter: () => ({
+                add: () => {}
+            }),
+            createHistogram: () => ({
+                record: () => {}
+            })
         };
     }
 }
 
 const meter = getMeter();
+
 const requestCounter = meter.createCounter("http_requests_total", {
     description: "Total number of HTTP requests"
 });
@@ -45,7 +50,7 @@ function getRandomNumber(min, max) {
 }
 
 app.get("/rolldice", (req, res) => {
-    requestCounter.add(1, { route: "/rolldice" });
+    requestCounter.add(1, {route: "/rolldice"});
 
     const span = tracer.startSpan("rolldice-request");
     span.setAttribute("http.route", "/rolldice");
@@ -58,7 +63,7 @@ app.get("/rolldice", (req, res) => {
 });
 
 app.get("/slow-operation", async (req, res) => {
-    requestCounter.add(1, { route: "/slow-operation" });
+    requestCounter.add(1, {route: "/slow-operation"});
 
     const parentSpan = tracer.startSpan("slow-operation-parent");
     await new Promise(resolve => setTimeout(resolve, 100));
